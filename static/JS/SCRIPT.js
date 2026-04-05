@@ -32,21 +32,28 @@ function updateWheel() {
 window.onload = updateWheel;
 
 document.getElementById('spinBtn').onclick = async () => {
-    if (options.length === 0) return;
-    
-    // Call the Python /spin route to get a fair winner
+    // 1. Get the names from the Participant box
+    const participantText = document.getElementById('optionsInput').value;
+    const currentParticipants = participantText.split('\n').filter(p => p.trim() !== "");
+
+    if (currentParticipants.length === 0) {
+        alert("Please add participants first!");
+        return;
+    }
+
+    // 2. Ask the server to pick a fair winner
     const response = await fetch('/spin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ options: options })
+        body: JSON.stringify({ options: currentParticipants })
     });
     const result = await response.json();
-    
-    // Display the winner and prize
+
+    // 3. Update the display
     document.getElementById('winnerDisplay').innerText = result.winner;
     document.getElementById('prizeDisplay').innerText = result.prize;
-    
-    // Add to History Table
+
+    // 4. Record in history
     const table = document.getElementById('historyBody');
     const row = table.insertRow(0);
     row.insertCell(0).innerText = table.rows.length;
