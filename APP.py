@@ -1,50 +1,38 @@
 from flask import Flask, render_template, request, jsonify
 import random
+import os
 
-app = Flask(__name__)
+# This line tells Flask exactly where your folders are
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
-# The list of people
 PARTICIPANTS = [
-    "亞莉珊", "簡艾波", "卡莉兒", "克里斯", "艾而潔", "艾米莉", 
-    "易芙琳", "吉思爾", "艾芮希", "羅琮妮", "簡米娜", "安利茲", 
-    "瑪莉蓮", "商米爾", "羅納德", "艾爾文", "裘莎瑪", "梅西莎", 
-    "艾莉卡", "富迪鎷", "法蒂瑪", "傑琦雅", "畢塔戈", "易傑克", 
-    "喬洛瑪", "朱莉娜", "詹瑞德", "卡珊卓", "肯尼斯", "絜蕾蒂", 
-    "幸運爾", "馬爾克", "莫爾珍", "齊麥克", "那芙", "賴瓦昇", 
-    "申瑞莎", "李凱揚", "史蒂芬", "莫妮卡", "林一帆", "欣倩", 
+    "亞莉珊", "簡艾波", "卡莉兒", "克里斯", "艾而潔", "艾米莉",
+    "易芙琳", "吉思爾", "艾芮希", "羅瑞妮", "簡米娜", "安利茲",
+    "瑪莉蓮", "喬米爾", "羅納德", "艾爾文", "裴莎瑪", "梅西莎",
+    "艾莉卡", "富迪碼", "法蒂瑪", "傑琦雅", "畢塔戈", "易傑克",
+    "喬洛瑪", "朱莉娜", "詹瑞德", "卡瑞卓", "肯尼斯", "絮蕾蒂",
+    "幸運爾", "馬爾克", "莫爾珍", "齊麥克", "那美", "賴瓦昇",
+    "申瑞莎", "季凱揚", "史蒂芬", "莫妮卡", "林一帆", "欣倩",
     "王瑛芮", "李康", "艾芬琪"
 ]
 
-# The list of potential prizes
 PRIZES = ["大獎", "二獎", "三獎", "再來一次", "神秘禮物", "安慰獎"]
 
 @app.route("/")
 def index():
-   return render_template('index.html')  # Make sure this is lowercase!
+    return render_template('index.html')
 
 @app.route("/spin", methods=["POST"])
 def spin():
     data = request.get_json()
-    options = data.get("options", []) # These are the participants from the textbox
-
+    options = data.get("options", [])
     if not options:
         return jsonify({"error": "請至少輸入一個選項"}), 400
+    winner = random.choice(options)
+    prize = random.choice(PRIZES)
+    return jsonify({"winner": winner, "prize": prize})
 
-    # 1. Pick a winning Participant
-    winner_index = random.randint(0, len(options) - 1)
-    winner_name = options[winner_index]
-
-    # 2. Pick a random Prize
-    winning_prize = random.choice(PRIZES)
-
-    return jsonify({
-        "winner_index": winner_index,
-        "winner_text": winner_name,
-        "prize": winning_prize  # Send the prize back too!
-    })
-
+# THIS PART IS CRITICAL FOR RENDER
 if __name__ == "__main__":
-    import os
-    # Get the port from Render's environment, default to 5000 for local testing
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
