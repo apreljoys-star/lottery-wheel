@@ -15,7 +15,7 @@
             <textarea id="prizesInput" rows="5">大獎&#10;二獎&#10;三獎&#10;神秘禮物&#10;精美文具&#10;安慰獎</textarea>
             
             <h3>抽獎者列表</h3>
-            <textarea id="optionsInput" rows="8">{{ options | join('\n') }}</textarea>
+            <textarea id="optionsInput" rows="8">{{ options | safe }}</textarea>
             
             <div class="button-group">
                 <button id="updateBtn">更新名單</button>
