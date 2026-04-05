@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import random
 import os
+import json
 
-# This line tells Flask exactly where your folders are
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 PARTICIPANTS = [
@@ -18,12 +18,11 @@ PARTICIPANTS = [
 
 PRIZES = ["大獎", "二獎", "三獎", "再來一次", "神秘禮物", "安慰獎"]
 
-import json # Add this at the very top of APP.py if it's not there
-
 @app.route("/")
 def index():
-    # We turn the list into a string here so the HTML doesn't have to do the work
-    return render_template('index.html', options=json.dumps(PARTICIPANTS))
+    # This turns the list into a clean JSON string that supports Chinese
+    options_json = json.dumps(PARTICIPANTS, ensure_ascii=False)
+    return render_template('index.html', options=options_json)
 
 @app.route("/spin", methods=["POST"])
 def spin():
@@ -35,9 +34,6 @@ def spin():
     prize = random.choice(PRIZES)
     return jsonify({"winner": winner, "prize": prize})
 
-# THIS PART IS CRITICAL FOR RENDER
 if __name__ == "__main__":
-    import os
-    # Render provides a PORT environment variable
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
