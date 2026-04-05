@@ -9,32 +9,20 @@ const ctx = canvas.getContext('2d');
 let startAngle = 0;
 
 function updateWheel() {
-    // Get the current names from the textarea
-    const text = document.getElementById('optionsInput').value;
-    options = text.split('\n').filter(name => name.trim() !== "");
+    // CHANGE THIS: Look at 'prizesInput' instead of 'optionsInput'
+    const text = document.getElementById('prizesInput').value;
+    const wheelItems = text.split('\n').filter(name => name.trim() !== "");
 
-    if (options.length === 0) {
+    if (wheelItems.length === 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         return;
     }
 
-    const arc = Math.PI * 2 / options.length;
-    options.forEach((opt, i) => {
+    const arc = Math.PI * 2 / wheelItems.length;
+    wheelItems.forEach((opt, i) => {
         const angle = startAngle + i * arc;
-        // This creates the colors for the slices
-        ctx.fillStyle = `hsl(${i * (360 / options.length)}, 70%, 60%)`;
-        ctx.beginPath();
-        ctx.moveTo(canvas.width / 2, canvas.height / 2);
-        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, angle, angle + arc);
-        ctx.fill();
-        ctx.save();
-        
-        // Add the names to the slices
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate(angle + arc / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "white";
-        ctx.font = "bold 14px Arial";
+        ctx.fillStyle = `hsl(${i * (360 / wheelItems.length)}, 70%, 60%)`;
+        // ... (rest of the drawing code is fine)
         ctx.fillText(opt, canvas.width / 2 - 10, 5);
         ctx.restore();
     });
