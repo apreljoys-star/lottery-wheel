@@ -26,19 +26,29 @@ def index():
 
 @app.route("/spin", methods=["POST"])
 def spin():
-    # This receives the data from your '開始抽獎' button
-    data = request.get_json()
-    
-    # Safety check: if no participants were sent, return an error
-    options = data.get("options", [])
-    if not options:
-        return jsonify({"error": "請輸入抽獎者名單"}), 400
-    
-    # Pick the winners
-    winner = random.choice(options)
-    prize = random.choice(PRIZES)
-    
-    return jsonify({"winner": winner, "prize": prize})
+    try:
+        # Get data from the button
+        data = request.get_json()
+        if not data:
+            return jsonify({"winner": "Error", "prize": "No data received"}), 400
+            
+        # Get the participants list
+        options = data.get("options", [])
+        
+        # If the list is empty, pick a fallback
+        if not options:
+            winner = "無名氏"
+        else:
+            winner = random.choice(options)
+            
+        # Pick the prize from our global list
+        prize = random.choice(PRIZES)
+        
+        return jsonify({"winner": winner, "prize": prize})
+    except Exception as e:
+        # This will print the exact error in your Render Logs
+        print(f"Error during spin: {e}")
+        return jsonify({"winner": "Server Busy", "prize": "Try again"}), 500
 
 if __name__ == "__main__":
     # Standard Render deployment settings
