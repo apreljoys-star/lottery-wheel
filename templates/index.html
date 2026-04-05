@@ -53,7 +53,7 @@
     </div>
 </div>
 <script>
-        const initialOptions = JSON.parse('{{ options | tojson | safe }}');
+        const initialOptions = {{ options | safe }};
     </script>
 
     <script src="{{ url_for('static', filename='JS/SCRIPT.js') }}"></script>
