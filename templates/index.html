@@ -53,8 +53,7 @@
     </div>
 </div>
 <script>
-        // This takes the plain text from Python and turns it into a JavaScript array
-const initialOptions = `{{ options | safe }}`.split('\n').filter(name => name.trim() !== "");
+       const initialOptions = `{{ options | safe }}`.split('\n').filter(name => name.trim() !== "");
     </script>
 
     <script src="{{ url_for('static', filename='JS/SCRIPT.js') }}"></script>
