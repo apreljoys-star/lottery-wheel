@@ -18,10 +18,12 @@ PARTICIPANTS = [
 
 PRIZES = ["大獎", "二獎", "三獎", "再來一次", "神秘禮物", "安慰獎"]
 
+import json # Add this at the very top of APP.py if it's not there
+
 @app.route("/")
 def index():
-    # We must pass the list of participants to the HTML!
-    return render_template('index.html', options=PARTICIPANTS)
+    # We turn the list into a string here so the HTML doesn't have to do the work
+    return render_template('index.html', options=json.dumps(PARTICIPANTS))
 
 @app.route("/spin", methods=["POST"])
 def spin():
