@@ -53,8 +53,15 @@
     </div>
 </div>
 <script>
-       const initialOptions = `{{ options | safe }}`.split('\n').filter(name => name.trim() !== "");
-    </script>
+    // This takes the plain text from Python and turns it into a list
+    const initialOptions = `{{ options | safe }}`.split('\n').filter(name => name.trim() !== "");
+    
+    // This tells the wheel to draw the PRIZES (the 6 items in the top box)
+    function getPrizes() {
+        const prizeText = document.getElementById('prizesInput').value;
+        return prizeText.split('\n').filter(p => p.trim() !== "");
+    }
+</script>
 
     <script src="{{ url_for('static', filename='JS/SCRIPT.js') }}"></script>
 </body>
