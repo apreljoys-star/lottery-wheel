@@ -1,59 +1,55 @@
-let options = [];
-// Use the initialOptions passed from HTML
-if (typeof initialOptions !== 'undefined') {
-    options = initialOptions;
-}
-
 const canvas = document.getElementById('wheelCanvas');
 const ctx = canvas.getContext('2d');
 let startAngle = 0;
 
 function updateWheel() {
-    // CHANGE THIS: Look at 'prizesInput' instead of 'optionsInput'
-    const text = document.getElementById('prizesInput').value;
-    const wheelItems = text.split('\n').filter(name => name.trim() !== "");
+    const prizes = document.getElementById('prizesInput').value.split('\n').filter(p => p.trim() !== "");
+    if (prizes.length === 0) return;
 
-    if (wheelItems.length === 0) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        return;
-    }
-
-    const arc = Math.PI * 2 / wheelItems.length;
-    wheelItems.forEach((opt, i) => {
+    const arc = Math.PI * 2 / prizes.length;
+    prizes.forEach((prize, i) => {
         const angle = startAngle + i * arc;
-        ctx.fillStyle = `hsl(${i * (360 / wheelItems.length)}, 70%, 60%)`;
-        // ... (rest of the drawing code is fine)
-        ctx.fillText(opt, canvas.width / 2 - 10, 5);
+        ctx.fillStyle = `hsl(${i * (360 / prizes.length)}, 70%, 60%)`;
+        ctx.beginPath();
+        ctx.moveTo(250, 250);
+        ctx.arc(250, 250, 250, angle, angle + arc);
+        ctx.fill();
+        
+        ctx.save();
+        ctx.translate(250, 250);
+        ctx.rotate(angle + arc / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "white";
+        ctx.font = "bold 18px Arial";
+        ctx.fillText(prize, 230, 10);
         ctx.restore();
     });
 }
 
-// Ensure the wheel draws as soon as the page loads
+// Draw the wheel as soon as the page loads
 window.onload = updateWheel;
 
 document.getElementById('spinBtn').onclick = async () => {
-    // 1. Get the names from the Participant box
-    const participantText = document.getElementById('optionsInput').value;
-    const currentParticipants = participantText.split('\n').filter(p => p.trim() !== "");
-
-    if (currentParticipants.length === 0) {
-        alert("Please add participants first!");
+    const participants = document.getElementById('optionsInput').value.split('\n').filter(p => p.trim() !== "");
+    
+    if (participants.length === 0) {
+        alert("Please add participants!");
         return;
     }
 
-    // 2. Ask the server to pick a fair winner
+    // Ask Python to pick a winner
     const response = await fetch('/spin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ options: currentParticipants })
+        body: JSON.stringify({ options: participants })
     });
     const result = await response.json();
 
-    // 3. Update the display
+    // Show the results on the screen
     document.getElementById('winnerDisplay').innerText = result.winner;
     document.getElementById('prizeDisplay').innerText = result.prize;
 
-    // 4. Record in history
+    // Add to the history table
     const table = document.getElementById('historyBody');
     const row = table.insertRow(0);
     row.insertCell(0).innerText = table.rows.length;
